@@ -6,16 +6,26 @@ class MockingTest extends PHPUnit_Framework_TestCase
 {
 	private $_mock	= null;
 
+	/**
+	 * Set up before test
+	 */
 	public function setUp()
 	{
 		$this->_mock = new Mocking();
 	}
 
+	/**
+	 * Tear down after test
+	 */
 	public function tearDown()
 	{
 		unset($this->_mock);
 	}
 
+	/**
+	 * Create a standardized mock object
+	 * (could be useful for mocking something like web services...)
+	 */
 	private function getMockStandard()
 	{
 		$stub = $this->getMock('Mocking',array(
@@ -30,6 +40,9 @@ class MockingTest extends PHPUnit_Framework_TestCase
 	
 	//---------------
 
+	/**
+	 * Test to ensure that a method is called at least once
+	 */
 	public function  testMockMethodIsCalled()
 	{
 		$mock = $this->getMock('Mocking',array('callOnce'));
@@ -39,6 +52,10 @@ class MockingTest extends PHPUnit_Framework_TestCase
 		$mock->callOnce();
 	}
 	
+	/**
+	 * Test the use of the MockBuilder to test the "calledSecond"
+	 * response
+	 */
 	public function testUsesMockBuilder()
 	{
 		$stub = $this->getMockBuilder('Mocking')
@@ -54,6 +71,10 @@ class MockingTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('foo',$stub->calledSecond());
 	}
 
+	/**
+	 * Test the mocked "addValues" method to return the correct 
+	 * added values (uses returnValue)
+	 */
 	public function testMockedAddition()
 	{
 		$stub = $this->getMock('Mocking',array('addValues'));
@@ -64,6 +85,10 @@ class MockingTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(3,$stub->addValues(1,2));
 	}
 
+	/**
+	 * Test the return of the "strToUpper" method's results based on
+	 * a callback to the PHP function "strtoupper"
+	 */
 	public function testMockedAdditionCallback()
 	{
 		$stub = $this->getMock('Mocking',array('strToUpper'));
@@ -74,6 +99,10 @@ class MockingTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('FOO',$stub->strToUpper('foo'));
 	}
 
+	/**
+	 * Test a call to another non-mocked method on a mock object
+	 * Mocked "callOnce", call "calledSecond"
+	 */
 	public function testNonMockedMethod()
 	{
 		$stub = $this->getMock('Mocking',array('callOnce'));
@@ -86,6 +115,10 @@ class MockingTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('foo',$stub->calledSecond());
 	}
 
+	/**
+	 * Test the mocking of a method that doesn't exist 
+	 * The return value is NULL, but no error is thrown
+	 */
 	public function testBadMockedMethod()
 	{
 		$stub = $this->getMock('Mocked',array('callBad'));
@@ -93,9 +126,23 @@ class MockingTest extends PHPUnit_Framework_TestCase
 			->method('callBad')
 			->will($this->returnValue(null));
 
-		$stub->callBad();
+		$this->assertNull($stub->callBad());
 	}
 
+	/**
+	 * Testing enforcing the type to "array" like the "enforceTypes"
+	 * method does via type hinting
+	 */
+	public function testTypesAreEnorced()
+	{
+		$stub = $this->getMock('Mocked',array('enforceTypes'));
+		$stub->expects($this->any())
+			->method('enforceTypes')
+			->with($this->isType('array'));
+
+		$this->assertTrue($stub->enforceTypes('bad call'));
+
+	}
 }
 
 ?>
