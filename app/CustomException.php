@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * A custom exception that can be used in the testing
+ * Nothing fancy, just a shel
+ *
+ * @author Chris Cornutt <ccornutt@phpdeveloper.org>
+ * @package phpunit-article-3
+ */
 class CustomException extends Exception 
 {
 
