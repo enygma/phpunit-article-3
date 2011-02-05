@@ -24,7 +24,10 @@ class Mocking
 	{
 		return strtoupper($string);
 	}
-
+	public function enforceTypes(array $number)
+	{
+		return true;
+	}
 }
 
 ?>
